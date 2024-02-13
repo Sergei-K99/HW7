@@ -4,18 +4,41 @@
     {
         static void Main(string[] args)
         {
-            Play play1 = new Play("Test", 2020, "TestUser", 1);
-            play1.ShowInfo();
-            play1.StartPlay();
-            play1 = null;
+            Test1();
 
             GC.Collect();
             GC.WaitForFullGCApproach();
-            GC.Collect();
+           
 
-            Console.WriteLine("End");
+            Console.Read();
+
+
+            Test2();
+
+
+            void Test1()
+            {
+                Play play1 = new Play("Test", 2020, "TestUser", Genre.sci_fi);
+                play1.ShowInfo();
+                play1.StartPlay();
+
+                using(Play play2 = new Play("Test2", 2022, "TestUser2", Genre.Action))
+                {
+                    play2.ShowInfo();
+
+                }     
+            }
+            void Test2()
+            {
+                using (Shop shop = new Shop("ATB","street test", ShopType.product))
+                {
+                    shop.ShowMess();
+
+                }
+            }
+
         }
-      
+        
     }
 
     public enum Genre
@@ -27,15 +50,15 @@
         Animated_film,
         Action,
     }
-
-    public class Play
+    public enum ShopType { product  }
+    public class Play : IDisposable
     {
         public string Name { get; set; }
         public int Date { get; set; }
         public string Author { get; set; }
-        public int Genre_Play { get; set; }
+        public Genre Genre_Play { get; set; }
 
-        public Play(string Name, int Date, string Author, int Genre_Play)
+        public Play(string Name, int Date, string Author, Genre Genre_Play)
         {
             this.Name = Name;
             this.Date = Date;
@@ -62,10 +85,39 @@
 
         public void ShowInfo()
         {
-            Console.WriteLine($"Автор: {Author}\nПьеса: {Name}\nЖанр:{Enum.GetName(typeof(Genre), Genre_Play)}\nГод написания:{Date}");
+            Console.WriteLine($"Автор: {Author}\nПьеса: {Name}\nЖанр:{Genre_Play}\nГод написания:{Date}");
+        }
+
+        public void Dispose()
+        {
+            Console.Beep();
+            Console.WriteLine("Деструктор отработал2");
+        }
+    }
+
+    public class Shop : IDisposable
+    {
+        public string Name { get; set; }
+        public string Street { get; set; }
+        public ShopType type { get; set; }
+
+        public Shop(string Name, string Street, ShopType type)
+        {
+            this.Name = Name;
+            this.Street = Street;
+            this.type = type;
+        }
+
+        public void Dispose()
+        {
+            Console.WriteLine("- Магазин удалён -");
         }
 
 
+        public void ShowMess()
+        {
+            Console.WriteLine("Если честно, ничего не придумал что можно вписать");
+        }
     }
 }
 
